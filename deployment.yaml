@@ -1,0 +1,49 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "webcv"
+  namespace: "ibapps"
+  labels:
+    app: "webvc"
+    service: "webserver"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "webcv"
+  template:
+    metadata:
+      labels:
+        app: "webcv"
+    spec:
+      containers:
+        - name: "webcv"
+          image: "iberejr/webcv:latest"
+          imagePullPolicy: "Always"
+          ports:
+            - containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: "/status"
+              port: 3000
+          env:
+            - name: "PORT"
+              value: "3000"
+      imagePullSecrets:
+        - name: "registry-secret"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "webcv"
+  namespace: "ibapps"
+  labels:
+    app: "webvc"
+    service: "webserver"
+spec:
+  selector:
+    app: "webcv"
+  ports:
+  - protocol: "TCP"
+    port: 80
