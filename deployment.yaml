@@ -3,7 +3,6 @@ apiVersion: "apps/v1"
 kind: "Deployment"
 metadata:
   name: "webcv"
-  namespace: "ibapps"
   labels:
     app: "webvc"
     service: "webserver"
@@ -19,31 +18,51 @@ spec:
     spec:
       containers:
         - name: "webcv"
-          image: "iberejr/webcv:latest"
-          imagePullPolicy: "Always"
+          image: "iberejr/webcv:0.2"
           ports:
             - containerPort: 3000
-          readinessProbe:
-            httpGet:
-              path: "/status"
-              port: 3000
           env:
             - name: "PORT"
               value: "3000"
-      imagePullSecrets:
-        - name: "registry-secret"
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: "webcv"
-  namespace: "ibapps"
+  annotations:
+    konghq.com/override: passive-health-check
   labels:
     app: "webvc"
     service: "webserver"
 spec:
   selector:
     app: "webcv"
+  type: LoadBalancer
   ports:
   - protocol: "TCP"
-    port: 80
+    port: 3000
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webcv
+  annotations:
+    kubernetes.io/ingress.class: kong
+spec:
+  tls:
+  - hosts:
+      - cv.ditizio.v6.rocks
+    secretName: certs-secret
+  rules:
+    - host: cv.ditizio.v6.rocks
+      http:
+        paths:
+        - path: /
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              name: webcv
+              port:
+                number: 3000
+
