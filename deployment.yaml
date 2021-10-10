@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: "webcv"
-          image: "iberejr/webcv:0.2"
+          image: "iberejr/webcv:latest"
           ports:
             - containerPort: 3000
           env:
