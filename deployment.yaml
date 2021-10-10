@@ -50,6 +50,7 @@ metadata:
   name: webcv
   annotations:
     kubernetes.io/ingress.class: kong
+    kubernetes.io/ingress.allow-http: false
 spec:
   tls:
   - hosts:
