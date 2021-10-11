@@ -1,4 +1,4 @@
-VERSION=$( printf "%0.1f" $( echo $VERSION + 0.1 | bc ) )
+VERSION=$( echo $VERSION + 0.1 | bc )
 git add .
 git commit -m "Versao inicial completa"
 git push
