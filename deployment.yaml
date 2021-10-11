@@ -49,6 +49,8 @@ kind: Ingress
 metadata:
   name: webcv
   annotations:
+    konghq.com/protocols: "https"
+    konghq.com/https-redirect-status-code: "301"
     kubernetes.io/ingress.class: kong
     kubernetes.io/ingress.allow-http: "false"
 spec:
